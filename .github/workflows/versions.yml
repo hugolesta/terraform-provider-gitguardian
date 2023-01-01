@@ -1,0 +1,61 @@
+name: semantic versioning
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  semanticversioning:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+          with:
+            # Fetch all commits
+            fetch-depth: 0
+            token: ${{ secrets.GG_GITHUB_TOKEN }}
+            ref: master
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v5
+          id: import_gpg
+          with:
+            gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+            git_user_signingkey: true
+            git_commit_gpgsign: true
+
+        - name: Calculate version
+          uses: paulhatch/semantic-version@v4.0.2
+          with:
+            tag_prefix: "v"
+            major_pattern: "BC:"
+            minor_pattern: "feat:"
+            format: "${major}.${minor}.${patch}"
+          id: calculate_version
+        - name: Set timezone
+          run: |
+            sudo rm -rf /etc/localtime
+            sudo ln -s /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+        - name: 'Get Previous tag'
+          id: previoustag
+          uses: "WyriHaximus/github-action-get-previous-tag@v1"
+          with:
+            fallback: 0.0.0 # Optional fallback tag to use when no tag can be found. It will be pushed in case the repository is new or it doesn't hav a tag.
+        - name: Applying changes on repo
+          uses: stefanzweifel/git-auto-commit-action@v4
+          with:
+            commit_message: "Update for version v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}" # is not rendering the version environment variables
+            commit_user_name: ${{ secrets.GIT_USERNAME }}
+            commit_user_email: ${{ secrets.GIT_EMAIL }}
+            commit_author: "${{ secrets.GIT_USERNAME }} <${{ secrets.GIT_EMAIL }}>"
+            tagging_message: "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
+            branch: master
+        - name: Bump version and push tag
+          uses: laputansoft/github-tag-action@v4.6
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            tag:  "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
+
