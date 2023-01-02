@@ -15,6 +15,9 @@ jobs:
             fetch-depth: 0
             token: ${{ secrets.GG_GITHUB_TOKEN }}
             ref: master
+        - name: Go Mod Tidy
+          run: |
+            go mod tidy
         - name: Calculate version
           uses: paulhatch/semantic-version@v4.0.2
           with:
@@ -45,10 +48,13 @@ jobs:
         - name: Release
           uses: ncipollo/release-action@v1
           with:
-            artifacts: ${{ inputs.releases_artifacts_path }}
             name: v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
             tag: v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
             generateReleaseNotes: true
             token: ${{ secrets.GG_GITHUB_TOKEN }}
+        
+        - name: Publish package 
+          run: |
+            GOPROXY=proxy.golang.org go list -m ${{secrerts.GG_REPO}}@v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
 
 
