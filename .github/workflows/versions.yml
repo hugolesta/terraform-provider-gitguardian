@@ -47,7 +47,7 @@ jobs:
           with:
             artifacts: ${{ inputs.releases_artifacts_path }}
             name: v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
-            tag: ${{ v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
+            tag: v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
             generateReleaseNotes: true
             token: ${{ secrets.GG_GITHUB_TOKEN }}
 
