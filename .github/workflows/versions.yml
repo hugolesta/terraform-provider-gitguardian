@@ -55,6 +55,6 @@ jobs:
         
         - name: Publish package 
           run: |
-            GOPROXY=proxy.golang.org go list -m ${{secrerts.GG_REPO}}@v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
+            GOPROXY=proxy.golang.org go list -m ${{secrets.GG_REPO}}@v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
 
 
