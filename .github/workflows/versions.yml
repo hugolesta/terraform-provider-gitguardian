@@ -1,0 +1,54 @@
+name: semantic versioning
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  SemanticVersioning:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+          with:
+            # Fetch all commits
+            fetch-depth: 0
+            token: ${{ secrets.GG_GITHUB_TOKEN }}
+            ref: master
+        - name: Calculate version
+          uses: paulhatch/semantic-version@v4.0.2
+          with:
+            tag_prefix: "v"
+            major_pattern: "BC:"
+            minor_pattern: "feat:"
+            format: "${major}.${minor}.${patch}"
+          id: calculate_version
+        - name: Set timezone
+          run: |
+            sudo rm -rf /etc/localtime
+            sudo ln -s /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+        - name: 'Get Previous tag'
+          id: previoustag
+          uses: "WyriHaximus/github-action-get-previous-tag@v1"
+          with:
+            fallback: 0.0.0 # Optional fallback tag to use when no tag can be found. It will be pushed in case the repository is new or it doesn't hav a tag.
+        - name: Applying changes on repo
+          uses: stefanzweifel/git-auto-commit-action@v4
+          with:
+            commit_message: "Update for version v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}" # is not rendering the version environment variables
+            commit_user_name: ${{ secrets.GG_GITHUB_USER }}
+            commit_user_email: ${{ secrets.GG_GITHUB_EMAIL }}
+            commit_author: "${{ secrets.GG_GITHUB_USER }} <${{ secrets.GG_GITHUB_EMAIL }}>"
+            tagging_message: "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
+            branch: master
+
+        - name: Release
+          uses: ncipollo/release-action@v1
+          with:
+            artifacts: ${{ inputs.releases_artifacts_path }}
+            name: v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
+            tag: ${{ v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
+            generateReleaseNotes: true
+            token: ${{ secrets.GG_GITHUB_TOKEN }}
+
+
