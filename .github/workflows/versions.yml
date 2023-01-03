@@ -45,11 +45,6 @@ jobs:
             key: ${{ runner.os }}-go-pkg-mod-${{ hashFiles('go.sum') }}
           env:
             GITHUB_TOKEN: ${{ secrets.GG_GITHUB_TOKEN }}
-        - name: goreleaser check
-          uses: goreleaser/goreleaser-action@v4
-          with:
-            version:  v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
-            args: check
         - name: Applying changes on repo
           uses: stefanzweifel/git-auto-commit-action@v4
           with:
@@ -67,6 +62,11 @@ jobs:
             tag: v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
             generateReleaseNotes: true
             token: ${{ secrets.GG_GITHUB_TOKEN }}
+        - name: goreleaser check
+          uses: goreleaser/goreleaser-action@v4
+          with:
+            version:  v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
+            args: check
 
 
 
