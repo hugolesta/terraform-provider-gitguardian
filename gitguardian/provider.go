@@ -1,8 +1,8 @@
 package gitguardian
 
 import (
+	"github.com/Gaardsholt/go-gitguardian/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hugolesta/terraform-provider-gitguardian/api/client"
 )
 func Provider() *schema.Provider {
 	p := &schema.Provider{
@@ -16,7 +16,7 @@ func Provider() *schema.Provider {
 			"url": {
 				Type: schema.TypeString,
 				Optional: true,
-				DefaultFunc: schema.EnvDefaultFunc("GITGUARDIAN_URL", " https://api.gitguardian.com/v1/"),
+				DefaultFunc: schema.EnvDefaultFunc("GITGUARDIAN_URL", " https://api.gitguardian.com/"),
 				Description: "GitGuardian API url",
 			},
 		},
@@ -38,6 +38,9 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	
 	token := d.Get("token").(string)
 	url := d.Get("url").(string)
-
-	return client.NewClient(token, url)
+	c := client.Client{
+		Server: url,
+		ApiKey: token,
+	}
+	return c, nil
 }
