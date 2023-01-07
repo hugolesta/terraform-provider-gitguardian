@@ -45,6 +45,12 @@ jobs:
             key: ${{ runner.os }}-go-pkg-mod-${{ hashFiles('go.sum') }}
           env:
             GITHUB_TOKEN: ${{ secrets.GG_GITHUB_TOKEN }}
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v5
+          with:
+            gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+            git_user_signingkey: true
+            git_commit_gpgsign: true
         - name: Applying changes on repo
           uses: stefanzweifel/git-auto-commit-action@v4
           with:
