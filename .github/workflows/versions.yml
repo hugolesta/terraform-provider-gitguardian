@@ -13,9 +13,7 @@ jobs:
           with:
             # Fetch all commits
             fetch-depth: 0
-            token: ${{ secrets.GITHUB_TOKEN }}
-            ref: master
-
+            
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v5
           id: import_gpg
