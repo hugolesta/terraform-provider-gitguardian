@@ -1,8 +1,5 @@
 name: semantic versioning
 on:
-  push:
-    branches:
-      - "master"
   pull_request:
     types:
       - closed
@@ -53,9 +50,3 @@ jobs:
             commit_author: "${{ secrets.GIT_USERNAME }} <${{ secrets.GIT_EMAIL }}>"
             tagging_message: "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
             branch: master
-        - name: Bump version and push tag
-          uses: laputansoft/github-tag-action@v4.6
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            tag:  "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
-
