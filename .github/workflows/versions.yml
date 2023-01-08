@@ -49,3 +49,8 @@ jobs:
             commit_user_email: ${{ secrets.GIT_EMAIL }}
             commit_author: "${{ secrets.GIT_USERNAME }} <${{ secrets.GIT_EMAIL }}>"
             tagging_message: "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
+            
+        - name: bump new tag 
+          run : |
+            git push origin "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
+
