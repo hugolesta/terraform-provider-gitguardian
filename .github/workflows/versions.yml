@@ -55,7 +55,7 @@ jobs:
           with:
             name: "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
             tag: "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
-            token: ${{ secrets.SYS_GITHUB_TOKEN }}
+            token: ${{ secrets.GITHUB_TOKEN }}
 
 
 
