@@ -51,11 +51,6 @@ jobs:
             tagging_message: "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
         
         - name: Bump tag
-          uses: ncipollo/release-action@v1
+          uses: actions-ecosystem/action-push-tag@v1
           with:
-            name: "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
             tag: "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
-            token: ${{ secrets.GITHUB_TOKEN }}
-
-
-
