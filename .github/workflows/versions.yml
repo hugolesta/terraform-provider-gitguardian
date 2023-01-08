@@ -47,27 +47,19 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GG_GITHUB_TOKEN }}
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v5
+          id: import_gpg
           with:
             gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
             git_user_signingkey: true
             git_commit_gpgsign: true
-        - name: Applying changes on repo
-          uses: stefanzweifel/git-auto-commit-action@v4
-          with:
-            commit_message: "Update for version v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}" # is not rendering the version environment variables
-            commit_user_name: ${{ secrets.GG_GITHUB_USER }}
-            commit_user_email: ${{ secrets.GG_GITHUB_EMAIL }}
-            commit_author: "${{ secrets.GG_GITHUB_USER }} <${{ secrets.GG_GITHUB_EMAIL }}>"
-            tagging_message: "v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}"
-            branch: master
 
-        - name: Release
-          uses: ncipollo/release-action@v1
+        - name: Run GoReleaser
+          uses: goreleaser/goreleaser-action@v4.1.0
           with:
-            name: v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
-            tag: v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
-            generateReleaseNotes: true
-            token: ${{ secrets.GG_GITHUB_TOKEN }}
-
+            version: latest
+            args: release --rm-dist
+          env:
+            GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+            GITHUB_TOKEN: ${{ secrets.GG_GITHUB_TOKEN }}
 
 
