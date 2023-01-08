@@ -52,4 +52,7 @@ jobs:
 
         - name: bump new tag 
           run : |
-            git push origin v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
+            git push  https://${{ secrets.GG_GITHUB_TOKEN }}@github.com/hugolesta/terraform-provider-gitguardian.git v${{ steps.calculate_version.outputs.major }}.${{ steps.calculate_version.outputs.minor }}.${{ steps.calculate_version.outputs.patch }}
+
+
+
