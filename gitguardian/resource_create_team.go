@@ -23,10 +23,6 @@ func resourceCreateTeam() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"team_description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 		},
 	}
 }
@@ -40,18 +36,10 @@ func resourceCreateTeamCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	retryErr := resource.Retry(1*time.Minute, func() *resource.RetryError {
-		if _, err := team.Create(teamsOps); err != nil {
-			return resource.RetryableError(err)
-		}
-		return nil
-	})
-	
-	if retryErr != nil {
-		time.Sleep(2 * time.Second)
-		return retryErr
+	if _, err := team.Create(teamsOps); err != nil {
+		return err
 	}
-
+	
 	return resourceCreateTeamRead(d, m)
 }
 
